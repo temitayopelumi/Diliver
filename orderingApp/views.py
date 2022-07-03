@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny,IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Menu, Order, OrderItem
-from .serializers import orderItemSerializer, menuSerializer, orderItems
+from .serializers import orderItemSerializer, menuSerializer
 
 preparation_queue = queue.Queue()
 
