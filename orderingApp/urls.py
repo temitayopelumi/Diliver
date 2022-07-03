@@ -8,4 +8,5 @@ urlpatterns = [
     path("add-item/<int:orderId>/", AddItemToOrder.as_view()),
     path("create-order/<int:tableId>/", CreateOrder.as_view()),
     path("place-order/<int:orderId>/", PlaceOrder.as_view()),
+    path("confirm-order/<int:orderId>/", ConfirmOrder.as_view())
 ]

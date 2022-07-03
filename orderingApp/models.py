@@ -39,8 +39,8 @@ class Order(models.Model):
     status = models.CharField(max_length=250, choices=Status, default="nyp")
     ordered_date = models.DateField(auto_now_add=True)
     order_items = models.ManyToManyField(OrderItem, related_name="order_item")
-
-
+    total_waiting_time = models.FloatField(blank = True, null=True)
+    total_amount = models.FloatField(blank=True, null=True)
 
 
 #assuming you cannot remove from an order or add to it.

@@ -1,3 +1,4 @@
+from datetime import datetime
 from urllib import response
 from django.shortcuts import get_object_or_404, render
 import queue 
@@ -8,7 +9,9 @@ from rest_framework.permissions import AllowAny,IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Menu, Order, OrderItem
-from .serializers import orderItemSerializer, menuSerializer
+from .serializers import orderItemSerializer, menuSerializer, orderItems
+
+preparation_queue = queue.Queue()
 
 
 def get_order_object(orderId):
@@ -108,19 +111,34 @@ class PlaceOrder(APIView):
             return Response( {"message":"Order has been Confirmed"},status=status.HTTP_400_BAD_REQUEST,)
         order.status="ac"
         order.save()
-        return Response( {"message":"Order Confirmed"},status=status.HTTP_200_OK,)
+        return Response( {"message":"Your order has been placed"},status=status.HTTP_200_OK,)
 
-preparation_queue = queue.Queue()
 
-#only admin user can use this endpoint to confirm an order
+#only admin user should be use this endpoint to confirm an order
 class ConfirmOrder(APIView):
-    permission_classes = (IsAdminUser)
     def post(self, request, orderId):
         order = get_order_object(orderId)
         if order.status != "ac":
-            return Response({"status":400})
+              return Response( {"message":"Order has been Confirmed"},status=status.HTTP_400_BAD_REQUEST,)
         order.status="preparing"
         order.save()
-        preparation_queue.put(order.order_items)
-        print(preparation_queue)
+        preparation_queue.put(orderId)
         return Response( {"message":"Order Confirmed"},status=status.HTTP_200_OK,)
+
+
+class CancelOrder(APIView):
+    def post(self, request, orderId):
+        order = get_order_object(orderId)
+        if order.status != "completed" or order.status != "cancelled":
+            return Response( {"message":"Order has been Completed"},status=status.HTTP_400_BAD_REQUEST,)
+        order.status = "cancelled"
+        order.save()
+        preparation_queue.get(orderId)
+        return Response( {"message":"Order Cancelled"},status=status.HTTP_200_OK,)
+
+
+  
+      
+
+
+       
