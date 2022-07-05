@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'orderingApp.apps.OrderingappConfig',
     'django_extensions',
     "rest_framework",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
